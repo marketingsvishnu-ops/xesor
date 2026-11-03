@@ -1,0 +1,722 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TITAN X — Performance Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #11110f;
+  --surface: #1b1b18;
+  --orange: #ff5722;
+  --cream: #f2efe7;
+  --gray: #9a9990;
+  --line: rgba(242,239,231,.15);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--cream);
+  font-family: "DM Sans", sans-serif;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+::selection { background: var(--orange); color: white; }
+
+.noise {
+  position: fixed; inset: 0; z-index: 50;
+  pointer-events: none; opacity: .045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+.container { width: 86%; max-width: 1440px; margin: auto; }
+header {
+  height: 82px; display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 7%; border-bottom: 1px solid var(--line);
+  position: absolute; top: 0; left: 0; width: 100%; z-index: 10;
+}
+.brand {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 32px; font-weight: 900; letter-spacing: -1px;
+}
+.brand span { color: var(--orange); }
+.nav { display: flex; gap: 30px; align-items: center; }
+.nav a { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #c6c3ba; }
+.nav a:hover { color: var(--orange); }
+.header-btn {
+  background: var(--orange); padding: 13px 19px;
+  color: white !important; font-weight: 800;
+}
+.menu {
+  display: none; border: 0; color: var(--cream);
+  background: transparent; font-size: 27px; cursor: pointer;
+}
+
+.hero {
+  min-height: 760px; min-height: 100svh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center; position: relative; overflow: hidden;
+  padding: 120px 7% 65px;
+}
+.hero::before {
+  content: "TX"; position: absolute; left: 31%; top: 10%;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(220px, 35vw, 520px); font-weight: 900;
+  line-height: 1; color: rgba(255,255,255,.018);
+  pointer-events: none;
+}
+.hero-copy { position: relative; z-index: 2; }
+.kicker {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 10px; letter-spacing: 3px; font-weight: 800;
+  text-transform: uppercase; color: var(--orange);
+}
+.kicker::before { content: ""; width: 28px; height: 2px; background: currentColor; }
+h1, h2, h3 { font-family: "Barlow Condensed", sans-serif; }
+.hero h1 {
+  font-size: clamp(75px, 10.4vw, 150px);
+  line-height: .78; letter-spacing: -3px;
+  font-weight: 900; margin: 32px 0;
+}
+.hero h1 span {
+  display: block; color: var(--orange);
+  -webkit-text-stroke: 1px var(--orange);
+}
+.hero h1 .outline {
+  color: transparent; -webkit-text-stroke: 1.5px var(--cream);
+}
+.hero-desc {
+  color: #aaa79e; font-size: 13px;
+  max-width: 380px; line-height: 1.9; margin-bottom: 30px;
+}
+.actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 16px 23px; background: var(--orange);
+  border: 1px solid var(--orange); color: white;
+  font-size: 10px; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; transition: .25s;
+}
+.btn:hover { background: transparent; transform: translateY(-3px); }
+.btn-ghost { background: transparent; border-color: var(--line); }
+.btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+.hero-bottom {
+  display: flex; gap: 28px; margin-top: 46px; flex-wrap: wrap;
+}
+.hero-stat strong {
+  display: block; font-family: "Barlow Condensed", sans-serif;
+  font-size: 30px; font-weight: 800;
+}
+.hero-stat small {
+  display: block; color: var(--gray); margin-top: 4px;
+  font-size: 9px; text-transform: uppercase; letter-spacing: 1.3px;
+}
+
+/* 3D SPHERE */
+.visual {
+  height: 590px; position: relative; perspective: 1000px;
+  display: grid; place-items: center;
+}
+.ambient {
+  position: absolute; width: 390px; height: 390px;
+  border-radius: 50%; background: rgba(255,87,34,.13);
+  filter: blur(90px);
+}
+.sphere-scene {
+  width: 360px; height: 360px;
+  position: relative; transform-style: preserve-3d;
+  animation: sceneFloat 6s ease-in-out infinite;
+}
+.sphere {
+  width: 100%; height: 100%;
+  position: absolute; transform-style: preserve-3d;
+  animation: sphereRotate 24s linear infinite;
+}
+.sphere-ring {
+  position: absolute; inset: 0; border: 1px solid rgba(255,87,34,.8);
+  border-radius: 50%; transform-style: preserve-3d;
+  box-shadow: 0 0 16px rgba(255,87,34,.07);
+}
+.sphere-ring:nth-child(2) { transform: rotateY(30deg); }
+.sphere-ring:nth-child(3) { transform: rotateY(60deg); }
+.sphere-ring:nth-child(4) { transform: rotateY(90deg); }
+.sphere-ring:nth-child(5) { transform: rotateY(120deg); }
+.sphere-ring:nth-child(6) { transform: rotateY(150deg); }
+.sphere-ring:nth-child(7) { transform: rotateX(60deg); border-color: rgba(242,239,231,.55); }
+.sphere-ring:nth-child(8) { transform: rotateX(120deg); border-color: rgba(242,239,231,.55); }
+.sphere-ring:nth-child(9) { transform: rotateY(45deg) rotateX(45deg); border-style: dashed; }
+.sphere-core {
+  position: absolute; inset: 37%; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffc3a6, var(--orange) 40%, #7b1f0a 90%);
+  box-shadow: 0 0 35px var(--orange), 0 0 100px rgba(255,87,34,.3);
+  transform: translateZ(0);
+}
+.orbit {
+  position: absolute; width: 430px; height: 130px;
+  border: 1px solid rgba(242,239,231,.5);
+  border-radius: 50%; transform: rotate(-28deg);
+}
+.orbit::after {
+  content: ""; position: absolute; top: 50%; left: 4%;
+  width: 8px; height: 8px; background: var(--orange);
+  border-radius: 50%; box-shadow: 0 0 15px var(--orange);
+}
+.orbit.orbit-two {
+  width: 470px; height: 150px;
+  transform: rotate(58deg); border-color: rgba(255,87,34,.6);
+}
+.visual-label {
+  position: absolute; font-size: 9px; letter-spacing: 2px;
+  color: var(--gray); text-transform: uppercase;
+}
+.visual-label.top { top: 12%; right: 0; }
+.visual-label.bottom { bottom: 13%; left: 0; }
+.visual-label.right { right: 0; bottom: 28%; color: var(--orange); }
+
+@keyframes sphereRotate { to { transform: rotateY(360deg) rotateX(180deg); } }
+@keyframes sceneFloat { 0%,100% { transform: translateY(0) rotateZ(-4deg); } 50% { transform: translateY(-16px) rotateZ(4deg); } }
+
+/* MOVING STRIP */
+.strip {
+  overflow: hidden; background: var(--orange); color: white;
+  padding: 17px 0; transform: rotate(-1deg) scale(1.02);
+}
+.strip-inner {
+  display: flex; width: max-content;
+  animation: scrollStrip 25s linear infinite;
+}
+.strip-inner span {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px; font-weight: 800; letter-spacing: 2px;
+  padding: 0 24px; white-space: nowrap;
+}
+.strip-inner b { color: #2a1009; margin-right: 28px; }
+@keyframes scrollStrip { to { transform: translateX(-50%); } }
+
+section { padding: 110px 7%; }
+.section-head {
+  display: flex; justify-content: space-between;
+  align-items: end; gap: 25px; margin-bottom: 48px;
+}
+.section-head h2 {
+  font-size: clamp(45px, 7vw, 86px);
+  line-height: .88; margin-top: 20px; text-transform: uppercase;
+}
+.section-head h2 span { color: var(--orange); }
+.section-head p {
+  max-width: 330px; color: var(--gray);
+  font-size: 12px; line-height: 1.9;
+}
+
+/* TRAINING */
+.programs {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+}
+.program {
+  position: relative; min-height: 365px; padding: 25px;
+  border: 1px solid var(--line); background: var(--surface);
+  overflow: hidden; transition: .35s;
+}
+.program:hover { border-color: var(--orange); transform: translateY(-7px); }
+.program-number { font-size: 10px; color: var(--orange); letter-spacing: 2px; }
+.program-symbol {
+  height: 185px; display: grid; place-items: center;
+  color: var(--orange); font-size: 100px;
+  font-family: "Barlow Condensed", sans-serif;
+  text-shadow: 0 0 35px rgba(255,87,34,.12);
+  transition: .4s;
+}
+.program:hover .program-symbol { transform: scale(1.15) rotate(-7deg); }
+.program h3 { font-size: 32px; text-transform: uppercase; }
+.program p { font-size: 11px; color: var(--gray); line-height: 1.8; margin-top: 9px; }
+.program .arrow { position: absolute; top: 23px; right: 24px; font-size: 20px; }
+
+/* FEATURE BANNER */
+.feature {
+  background: var(--orange); color: #18100d;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center; gap: 45px; overflow: hidden;
+}
+.feature .kicker { color: #421b0e; }
+.feature h2 {
+  font-size: clamp(55px, 8vw, 100px);
+  line-height: .83; text-transform: uppercase;
+  margin: 25px 0;
+}
+.feature p { font-size: 13px; line-height: 1.9; max-width: 410px; }
+.feature .btn {
+  margin-top: 27px; background: #17120f;
+  border-color: #17120f; color: white;
+}
+.feature .btn:hover { color: #17120f; background: transparent; }
+.feature-art {
+  min-height: 360px; position: relative;
+  display: grid; place-items: center; perspective: 900px;
+}
+.iron-cube {
+  width: 190px; height: 190px;
+  transform-style: preserve-3d;
+  animation: ironSpin 14s linear infinite;
+}
+.iron-cube span {
+  position: absolute; inset: 0;
+  border: 3px solid #22120c;
+  background: rgba(255,255,255,.07);
+}
+.iron-cube span:nth-child(1) { transform: translateZ(95px); }
+.iron-cube span:nth-child(2) { transform: rotateY(180deg) translateZ(95px); }
+.iron-cube span:nth-child(3) { transform: rotateY(90deg) translateZ(95px); }
+.iron-cube span:nth-child(4) { transform: rotateY(-90deg) translateZ(95px); }
+.iron-cube span:nth-child(5) { transform: rotateX(90deg) translateZ(95px); }
+.iron-cube span:nth-child(6) { transform: rotateX(-90deg) translateZ(95px); }
+.feature-art::before, .feature-art::after {
+  content: ""; position: absolute; width: 330px; height: 330px;
+  border: 1px solid rgba(34,18,12,.4); border-radius: 50%;
+  transform: rotateX(65deg);
+}
+.feature-art::after { transform: rotateY(65deg); width: 370px; height: 370px; }
+@keyframes ironSpin { to { transform: rotateX(360deg) rotateY(360deg) rotateZ(45deg); } }
+
+/* MEMBERSHIP */
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+.plan {
+  border: 1px solid var(--line); background: var(--surface);
+  padding: 32px 27px; position: relative;
+}
+.plan.hot { border-color: var(--orange); background: linear-gradient(145deg, #332018, var(--surface) 60%); }
+.plan h3 { font-size: 30px; text-transform: uppercase; }
+.plan .price {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 65px; font-weight: 800; margin-top: 20px;
+}
+.plan .price small {
+  font-family: "DM Sans", sans-serif;
+  font-size: 11px; font-weight: 400; color: var(--gray);
+}
+.plan > p { color: var(--gray); font-size: 11px; margin: 8px 0 25px; }
+.plan ul { list-style: none; border-top: 1px solid var(--line); padding-top: 23px; min-height: 160px; }
+.plan li { font-size: 12px; color: #c7c4bb; margin-bottom: 16px; }
+.plan li::before { content: "+ "; color: var(--orange); font-weight: 800; margin-right: 7px; }
+.plan .btn { width: 100%; }
+.tag {
+  position: absolute; right: 18px; top: 18px;
+  background: var(--orange); color: white;
+  font-size: 9px; font-weight: 800; padding: 7px 9px;
+}
+
+/* BMI */
+.bmi-area { background: #191916; }
+.bmi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.bmi-copy h2 {
+  font-size: clamp(50px, 7vw, 84px);
+  text-transform: uppercase; line-height: .88; margin: 20px 0;
+}
+.bmi-copy h2 span { color: var(--orange); }
+.bmi-copy p { color: var(--gray); font-size: 12px; line-height: 1.9; max-width: 390px; }
+.bmi-form { background: #10100e; padding: 30px; border: 1px solid var(--line); }
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; color: #c3c0b7; font-size: 11px; margin-bottom: 9px; }
+.input-group input {
+  width: 100%; background: #1c1c18; border: 1px solid #414038;
+  color: white; padding: 15px; outline: none;
+}
+.input-group input:focus { border-color: var(--orange); }
+.bmi-result {
+  display: none; margin-top: 20px; padding: 20px;
+  border: 1px solid rgba(255,87,34,.5); background: rgba(255,87,34,.08);
+}
+.bmi-result strong {
+  display: block; font-family: "Barlow Condensed", sans-serif;
+  font-size: 45px; color: var(--orange);
+}
+.bmi-result p { font-size: 12px; color: #c4c0b7; line-height: 1.7; margin-top: 7px; }
+
+/* FOOTER */
+footer { padding: 65px 7% 25px; }
+.footer-main {
+  display: flex; justify-content: space-between;
+  gap: 35px; flex-wrap: wrap; padding-bottom: 45px;
+}
+.footer-about { max-width: 300px; }
+.footer-about p { color: var(--gray); font-size: 12px; line-height: 1.9; margin-top: 15px; }
+.footer-col h4 { color: var(--orange); font-size: 10px; letter-spacing: 2px; margin-bottom: 18px; }
+.footer-col a { display: block; font-size: 12px; color: #b3b0a7; margin-bottom: 13px; }
+.footer-col a:hover { color: var(--orange); }
+.footer-bottom {
+  border-top: 1px solid var(--line); padding-top: 22px;
+  display: flex; justify-content: space-between;
+  flex-wrap: wrap; gap: 15px; color: #77766e; font-size: 10px;
+}
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(24px); transition: .7s ease; }
+.reveal.show { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; padding-top: 145px; }
+  .hero-copy { text-align: center; }
+  .hero .kicker, .actions { justify-content: center; }
+  .hero-desc { margin-left: auto; margin-right: auto; }
+  .hero-bottom { justify-content: center; }
+  .visual { height: 490px; }
+  .programs, .plans { grid-template-columns: repeat(2, 1fr); }
+  .program:last-child, .plan:last-child { grid-column: 1 / -1; }
+  .feature, .bmi-grid { grid-template-columns: 1fr; }
+  .feature-art { min-height: 300px; }
+  .section-head { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 600px) {
+  header { height: 70px; padding: 0 5%; }
+  .brand { font-size: 27px; }
+  .menu { display: block; }
+  .nav {
+    display: none; position: absolute; top: 69px; left: 0; right: 0;
+    background: #151512; padding: 25px 6%;
+    align-items: stretch; flex-direction: column; gap: 23px;
+    border-bottom: 1px solid var(--line);
+  }
+  .nav.open { display: flex; }
+  .nav .header-btn { text-align: center; }
+  .hero { padding: 125px 5% 25px; }
+  .hero h1 { font-size: clamp(72px, 17vw, 105px); }
+  .visual { height: 360px; transform: scale(.76); margin: -10px -50px; }
+  section { padding: 75px 5%; }
+  .programs, .plans { grid-template-columns: 1fr; }
+  .program:last-child, .plan:last-child { grid-column: auto; }
+  .program { min-height: 320px; }
+  .feature { padding: 75px 5%; gap: 10px; }
+  .feature-art { transform: scale(.8); margin: -15px 0; }
+  .bmi-grid { gap: 30px; }
+  .bmi-form { padding: 22px; }
+  footer { padding: 50px 5% 25px; }
+}
+</style>
+</head>
+
+<body>
+<div class="noise"></div>
+
+<header>
+  <a class="brand" href="#home">TITAN<span>X.</span></a>
+  <button class="menu" id="menuBtn" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  <nav class="nav" id="nav">
+    <a href="#training">Training</a>
+    <a href="#about">Our Method</a>
+    <a href="#membership">Membership</a>
+    <a href="#bmi">BMI Tool</a>
+    <a class="header-btn" href="#membership">Join Titan ↗</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="hero-copy">
+      <div class="kicker">Built different. Trained different.</div>
+      <h1>MAKE<br>YOUR<br><span>MARK.</span><span class="outline">MOVE.</span></h1>
+      <p class="hero-desc">
+        No shortcuts. No average days. Just intelligent training,
+        serious equipment and a community built to push further.
+      </p>
+      <div class="actions">
+        <a href="#membership" class="btn">Find Your Membership ↗</a>
+        <a href="#training" class="btn btn-ghost">Explore Training</a>
+      </div>
+      <div class="hero-bottom">
+        <div class="hero-stat"><strong>24/7</strong><small>Gym Access</small></div>
+        <div class="hero-stat"><strong>40+</strong><small>Weekly Classes</small></div>
+        <div class="hero-stat"><strong>100%</strong><small>Your Potential</small></div>
+      </div>
+    </div>
+
+    <div class="visual" id="visual">
+      <div class="ambient"></div>
+      <div class="orbit"></div>
+      <div class="orbit orbit-two"></div>
+      <div class="sphere-scene">
+        <div class="sphere">
+          <div class="sphere-ring"></div>
+          <div class="sphere-ring"></div>
+          <div class="sphere-ring"></div>
+          <div class="sphere-ring"></div>
+          <div class="sphere-ring"></div>
+          <div class="sphere-ring"></div>
+          <div class="sphere-ring"></div>
+          <div class="sphere-ring"></div>
+          <div class="sphere-ring"></div>
+          <div class="sphere-core"></div>
+        </div>
+      </div>
+      <div class="visual-label top">TITAN SYSTEM / 001</div>
+      <div class="visual-label bottom">STRENGTH IN MOTION</div>
+      <div class="visual-label right">POWER UP ↗</div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div class="strip-inner">
+      <span><b>✳</b> LIFT HEAVY</span>
+      <span><b>✳</b> MOVE FAST</span>
+      <span><b>✳</b> STAY HUNGRY</span>
+      <span><b>✳</b> EARN YOUR EDGE</span>
+      <span><b>✳</b> LIFT HEAVY</span>
+      <span><b>✳</b> MOVE FAST</span>
+      <span><b>✳</b> STAY HUNGRY</span>
+      <span><b>✳</b> EARN YOUR EDGE</span>
+    </div>
+  </div>
+
+  <section id="training">
+    <div class="section-head reveal">
+      <div>
+        <div class="kicker">Choose your discipline</div>
+        <h2>TRAIN WITH<br><span>INTENTION.</span></h2>
+      </div>
+      <p>Different goals. Different methods. One place to build the stronger version of yourself.</p>
+    </div>
+
+    <div class="programs">
+      <article class="program reveal">
+        <div class="program-number">01 / STRENGTH</div>
+        <span class="arrow">↗</span>
+        <div class="program-symbol" aria-hidden="true">╋</div>
+        <h3>Iron Works</h3>
+        <p>Build muscle and develop strength with structured resistance training and progressive overload.</p>
+      </article>
+      <article class="program reveal">
+        <div class="program-number">02 / CONDITIONING</div>
+        <span class="arrow">↗</span>
+        <div class="program-symbol" aria-hidden="true">ϟ</div>
+        <h3>Fast & Fierce</h3>
+        <p>Push your conditioning with interval sessions, athletic drills and high-energy group workouts.</p>
+      </article>
+      <article class="program reveal">
+        <div class="program-number">03 / RECOVERY</div>
+        <span class="arrow">↗</span>
+        <div class="program-symbol" aria-hidden="true">⌁</div>
+        <h3>Reset Mode</h3>
+        <p>Improve mobility and movement quality with guided stretching and recovery-focused sessions.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="feature" id="about">
+    <div class="reveal">
+      <div class="kicker">The Titan Method</div>
+      <h2>BUILT<br>FOR THE<br>WORK.</h2>
+      <p>
+        Your results come from the work you put in. We provide the space,
+        the tools and the coaching to help you train with purpose.
+        Show up consistently and let progress do the talking.
+      </p>
+      <a href="#membership" class="btn">Start Your Journey ↗</a>
+    </div>
+    <div class="feature-art" aria-hidden="true">
+      <div class="iron-cube">
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="membership">
+    <div class="section-head reveal">
+      <div>
+        <div class="kicker">Access your next level</div>
+        <h2>NO EXCUSES.<br><span>JUST OPTIONS.</span></h2>
+      </div>
+      <p>Choose a plan that fits your routine. Membership details and pricing below are sample content you can customize.</p>
+    </div>
+
+    <div class="plans">
+      <article class="plan reveal">
+        <h3>Core</h3>
+        <div class="price">$29<small> / month</small></div>
+        <p>Your foundation starts here.</p>
+        <ul>
+          <li>Gym floor access</li>
+          <li>Strength equipment</li>
+          <li>Locker room facilities</li>
+          <li>Introductory orientation</li>
+        </ul>
+        <a class="btn btn-ghost" href="mailto:hello@yourgym.com?subject=Core%20Membership">Choose Core ↗</a>
+      </article>
+
+      <article class="plan hot reveal">
+        <span class="tag">POPULAR</span>
+        <h3>Unleashed</h3>
+        <div class="price">$59<small> / month</small></div>
+        <p>More training. More momentum.</p>
+        <ul>
+          <li>Everything in Core</li>
+          <li>Group training classes</li>
+          <li>Monthly progress review</li>
+          <li>Guest pass each month</li>
+        </ul>
+        <a class="btn" href="mailto:hello@yourgym.com?subject=Unleashed%20Membership">Choose Unleashed ↗</a>
+      </article>
+
+      <article class="plan reveal">
+        <h3>Beast</h3>
+        <div class="price">$99<small> / month</small></div>
+        <p>A more personalized approach.</p>
+        <ul>
+          <li>Everything in Unleashed</li>
+          <li>Personal coaching session</li>
+          <li>Priority class booking</li>
+          <li>Custom training plan</li>
+        </ul>
+        <a class="btn btn-ghost" href="mailto:hello@yourgym.com?subject=Beast%20Membership">Choose Beast ↗</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="bmi-area" id="bmi">
+    <div class="bmi-grid">
+      <div class="bmi-copy reveal">
+        <div class="kicker">Measure your baseline</div>
+        <h2>KNOW YOUR<br><span>NUMBERS.</span></h2>
+        <p>
+          Use this BMI calculator as a general starting point.
+          BMI does not distinguish muscle from fat and is not a diagnosis
+          or a complete measure of individual health.
+        </p>
+      </div>
+      <form class="bmi-form reveal" id="bmiForm">
+        <div class="input-group">
+          <label for="height">HEIGHT (CM)</label>
+          <input type="number" id="height" min="80" max="250" placeholder="Example: 178" required>
+        </div>
+        <div class="input-group">
+          <label for="weight">WEIGHT (KG)</label>
+          <input type="number" id="weight" min="20" max="400" step="0.1" placeholder="Example: 80" required>
+        </div>
+        <button class="btn" type="submit" style="width:100%">Calculate BMI ↗</button>
+        <div class="bmi-result" id="bmiResult" aria-live="polite">
+          <strong id="bmiValue">--</strong>
+          <p id="bmiText"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-main">
+    <div class="footer-about">
+      <a class="brand" href="#home">TITAN<span>X.</span></a>
+      <p>Built on discipline. Powered by effort. A training space for people ready to make their mark.</p>
+    </div>
+    <div class="footer-col">
+      <h4>EXPLORE</h4>
+      <a href="#training">Training Programs</a>
+      <a href="#about">Our Method</a>
+      <a href="#membership">Memberships</a>
+    </div>
+    <div class="footer-col">
+      <h4>GET STARTED</h4>
+      <a href="#bmi">BMI Calculator</a>
+      <a href="mailto:hello@yourgym.com">Contact the Team</a>
+      <a href="#home">Back to Top ↑</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="year"></span> TITAN X FITNESS. ALL RIGHTS RESERVED.</span>
+    <span>DISCIPLINE BUILDS DIFFERENCE.</span>
+  </div>
+</footer>
+
+<script>
+const menuButton = document.getElementById("menuBtn");
+const nav = document.getElementById("nav");
+
+menuButton.addEventListener("click", () => {
+  const isOpen = nav.classList.toggle("open");
+  menuButton.setAttribute("aria-expanded", String(isOpen));
+  menuButton.textContent = isOpen ? "✕" : "☰";
+});
+
+nav.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    nav.classList.remove("open");
+    menuButton.setAttribute("aria-expanded", "false");
+    menuButton.textContent = "☰";
+  });
+});
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+// Reveal sections when they enter the viewport.
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("show");
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll(".reveal").forEach(element => observer.observe(element));
+
+// Gentle mouse-controlled perspective on the 3D centerpiece.
+const visual = document.getElementById("visual");
+const sphereScene = document.querySelector(".sphere-scene");
+const motionReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+if (!motionReduced && window.matchMedia("(pointer: fine)").matches) {
+  visual.addEventListener("mousemove", event => {
+    const rect = visual.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    sphereScene.style.marginLeft = `${x * 16}px`;
+    sphereScene.style.marginTop = `${y * 16}px`;
+  });
+
+  visual.addEventListener("mouseleave", () => {
+    sphereScene.style.marginLeft = "0";
+    sphereScene.style.marginTop = "0";
+  });
+}
+
+// BMI calculator.
+document.getElementById("bmiForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const heightCm = Number(document.getElementById("height").value);
+  const weightKg = Number(document.getElementById("weight").value);
+
+  if (heightCm < 80 || heightCm > 250 || weightKg < 20 || weightKg > 400) {
+    return;
+  }
+
+  const heightM = heightCm / 100;
+  const bmi = weightKg / (heightM * heightM);
+  let category;
+
+  if (bmi < 18.5) category = "Below the usual adult BMI range.";
+  else if (bmi < 25) category = "Within the usual adult BMI range.";
+  else if (bmi < 30) category = "Above the usual adult BMI range.";
+  else category = "In a higher adult BMI category.";
+
+  document.getElementById("bmiValue").textContent = bmi.toFixed(1);
+  document.getElementById("bmiText").textContent =
+    category + " BMI is a screening measure, not a diagnosis, and may not reflect muscularity or individual health.";
+  document.getElementById("bmiResult").style.display = "block";
+});
+</script>
+</body>
+</html>
+```
